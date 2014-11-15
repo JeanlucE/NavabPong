@@ -134,7 +134,7 @@ public class PongLogic : MonoBehaviour
 
 			StartCoroutine ("GameOver");
         }
-        else if (ballsIntern.Count == 1) {
+        else if (ballsIntern.Count == 1 &&  !idleBalloonRunning ) {
             StartCoroutine("IdleBalloon");
         }
 
@@ -153,8 +153,10 @@ public class PongLogic : MonoBehaviour
 	}
 
     public AnimationCurve slowCurve;
+    private bool idleBalloonRunning = false;
 	private IEnumerator IdleBalloon ()
 	{
+        idleBalloonRunning = true;
 		yield return new WaitForSeconds (1f);
 
         while (ballsIntern.Count == 1 && !isMovingTowardCenter(ballsIntern[0])) { 
@@ -176,12 +178,15 @@ public class PongLogic : MonoBehaviour
             ball.transform.position = new Vector3(0, ball.transform.position.y, 0);
             ball.rigidbody.velocity = new Vector3(0, 0, 0);
 
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(1.5f);
 
-            AddBall(new Vector3(2f, ball.transform.position.y, 0f), new Vector3(startVel * 0.5f, ball.transform.position.y, 0f));
-            ball.transform.position = new Vector3(-2f, ball.transform.position.y, 0);
-            ball.rigidbody.velocity = new Vector3(-startVel * 0.5f, ball.transform.position.y, 0f);
+            AddBall(new Vector3(0.5f, ball.transform.position.y, 0f), new Vector3(startVel, 0f, 0f));
+
+            ball.transform.position = new Vector3(-0.5f, ball.transform.position.y, 0);
+            ball.rigidbody.velocity = new Vector3(-startVel, 0f, 0f);
             ball.GetComponent<TrailRenderer>().enabled = true;
+
+            idleBalloonRunning = false;
         }
 	}
 
