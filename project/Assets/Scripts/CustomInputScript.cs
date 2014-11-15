@@ -114,6 +114,9 @@ public class CustomInputScript : MonoBehaviour
                     closestBall = ball;
             }
 
+            if (closestBall == null)
+                return;
+
             leftValue = (float)closestBall.transform.position.y / pongLogic.getMaxBatPos();
             rightValue = (Input.mousePosition.y / (float)Screen.height) * 2 - 1;
 

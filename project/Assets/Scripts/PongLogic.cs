@@ -26,8 +26,9 @@ public class PongLogic : MonoBehaviour
     private float minVelocity = 6f;
 
     // Ball Splitting
-    private float timeToBallIdleSplit = 10f;
-    private float durationToBallSplit = 1f;
+    private float timeToBallIdleSplit = 8f;
+    private float durationToBallSplit = 1.3f;
+    private float velocityPercentageAfterSplit = 0.5f;
 
     //Wie stark der motor rumbled bei einem auftreffen vom ball
     public int rumblePower = 1000;
@@ -192,7 +193,7 @@ public class PongLogic : MonoBehaviour
         {
             GameObject ball = ballsIntern[0];
             ball.GetComponent<TrailRenderer>().enabled = false;
-            float startVel = ball.rigidbody.velocity.magnitude * 0.5f;
+            float startVel = ball.rigidbody.velocity.magnitude;
             float startX = ball.transform.position.x;
 
             while (Mathf.Abs(ball.transform.position.x) >= 0.1f)
@@ -206,10 +207,10 @@ public class PongLogic : MonoBehaviour
 
             yield return new WaitForSeconds(durationToBallSplit);
 
-            AddBall(new Vector3(0.5f, ball.transform.position.y, 0f), new Vector3(startVel, 0f, 0f));
+            AddBall(new Vector3(0.5f, ball.transform.position.y, 0f), new Vector3(startVel * velocityPercentageAfterSplit, 0f, 0f));
 
             ball.transform.position = new Vector3(-0.5f, ball.transform.position.y, 0);
-            ball.rigidbody.velocity = new Vector3(-startVel, 0f, 0f);
+            ball.rigidbody.velocity = new Vector3(-startVel * velocityPercentageAfterSplit, 0f, 0f);
             ball.GetComponent<TrailRenderer>().enabled = true;
 
             idleBalloonRunning = false;
