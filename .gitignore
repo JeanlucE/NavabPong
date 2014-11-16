@@ -231,5 +231,5 @@ $RECYCLE.BIN/
 *.msp
 
 #Unity
-project/Library
-project/Temp/
+project/Library/*
+project/Temp/*
