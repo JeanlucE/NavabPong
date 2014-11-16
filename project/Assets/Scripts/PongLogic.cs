@@ -15,6 +15,7 @@ public class PongLogic : MonoBehaviour
     public ParticleSystem ballHitP1, ballHitP2;
 
     private Game game = Game.getInstance();
+    public bool EnableAddBallBehaviour = true;
 
     //Ball variablen
     private float maxBatPos = 3.2f;
@@ -156,7 +157,7 @@ public class PongLogic : MonoBehaviour
 
             StartCoroutine("GameOver");
         }
-        else if (ballsIntern.Count == 1 && !idleBalloonRunning)
+        else if (EnableAddBallBehaviour &&  ballsIntern.Count == 1 && !idleBalloonRunning)
         {
             StartCoroutine("IdleBalloon");
         }

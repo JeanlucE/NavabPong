@@ -229,3 +229,7 @@ $RECYCLE.BIN/
 *.msi
 *.msm
 *.msp
+
+#Unity
+project/Library
+project/Temp/

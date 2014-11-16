@@ -22,6 +22,8 @@ public class Game {
 
     public int player2GameScore { get; set; }
 
+    public CustomInputScript.InputMethod selectedInputMethod;
+
     private Game(){
         
     }

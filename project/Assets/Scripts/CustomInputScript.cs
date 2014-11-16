@@ -30,6 +30,8 @@ public class CustomInputScript : MonoBehaviour
 
     void Awake()
     {
+        inputMethod = Game.getInstance().selectedInputMethod;
+
         if (inputMethod == InputMethod.BeagleBoard)
         {
             try
@@ -145,7 +147,7 @@ public class CustomInputScript : MonoBehaviour
             if (closestBallLeft == null)
                 return;
 
-            leftValue = (float)closestBallLeft.transform.position.y / pongLogic.getMaxBatPos() + Random.Range(-0.1f, 0.1f);
+            leftValue = (float)closestBallLeft.transform.position.y / pongLogic.getMaxBatPos() + Random.Range(-0.01f, 0.01f);
 
             foreach (GameObject ball in pongLogic.getBalls())
             {
@@ -156,7 +158,7 @@ public class CustomInputScript : MonoBehaviour
             if (closestBallRight == null)
                 return;
 
-            rightValue = (float)closestBallRight.transform.position.y / pongLogic.getMaxBatPos() + Random.Range(-0.1f, 0.1f);
+            rightValue = (float)closestBallRight.transform.position.y / pongLogic.getMaxBatPos() + Random.Range(-0.01f, 0.01f);
 
 
             leftValue = Mathf.Clamp(leftValue, -1f, 1f);
