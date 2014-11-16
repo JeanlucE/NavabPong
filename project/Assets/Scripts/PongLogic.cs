@@ -16,6 +16,7 @@ public class PongLogic : MonoBehaviour
 
     private Game game = Game.getInstance();
     public bool EnableAddBallBehaviour = true;
+    public bool EnableMouse = true;
 
     //Ball variablen
     private float maxBatPos = 3.2f;
@@ -57,7 +58,7 @@ public class PongLogic : MonoBehaviour
             }
         }
 
-        Screen.showCursor = false;
+        Screen.showCursor = EnableMouse;
     }
 
     // Update is called once per frame
