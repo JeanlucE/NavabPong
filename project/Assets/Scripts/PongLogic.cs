@@ -26,7 +26,7 @@ public class PongLogic : MonoBehaviour
     private float minVelocity = 6f;
 
     // Ball Splitting
-    private float timeToBallIdleSplit = 8f;
+    private float timeToBallIdleSplit = 10f;
     private float durationToBallSplit = 1.3f;
     private float velocityPercentageAfterSplit = 0.5f;
 
@@ -141,7 +141,7 @@ public class PongLogic : MonoBehaviour
 
             if (ball.rigidbody.velocity.magnitude < minVelocity)
             {
-                ball.rigidbody.velocity *= (minVelocity / ball.rigidbody.velocity.magnitude);
+                ball.rigidbody.velocity *= (minVelocity / (ball.rigidbody.velocity.magnitude != 0f ? ball.rigidbody.velocity.magnitude : 1));
             }
         }
 
@@ -192,11 +192,12 @@ public class PongLogic : MonoBehaviour
         if (ballsIntern.Count == 1)
         {
             GameObject ball = ballsIntern[0];
+            ballSpin[0] = 0;
             ball.GetComponent<TrailRenderer>().enabled = false;
             float startVel = ball.rigidbody.velocity.magnitude;
             float startX = ball.transform.position.x;
 
-            while (Mathf.Abs(ball.transform.position.x) >= 0.1f)
+            while (Mathf.Abs(ball.transform.position.x) >= 0.075f)
             {
                 ball.rigidbody.velocity = ball.rigidbody.velocity.normalized * slowCurve.Evaluate(ball.transform.position.x / -startX + 1) * startVel;
                 yield return new WaitForFixedUpdate();

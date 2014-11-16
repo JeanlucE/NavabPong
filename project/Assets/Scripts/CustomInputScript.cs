@@ -6,7 +6,7 @@ public class CustomInputScript : MonoBehaviour
 {
 
     // Input Method
-    public enum InputMethod { AIvsMouse = 1, BeagleBoard = 2, Keyboard = 3, KeyboardMouse = 4 };
+    public enum InputMethod { AIvsAI = 0, AIvsMouse = 1, BeagleBoard = 2, Keyboard = 3, KeyboardMouse = 4 };
     public InputMethod inputMethod;
 
     // Input
@@ -104,8 +104,10 @@ public class CustomInputScript : MonoBehaviour
             leftPaddlePosLastFrame = leftSliderPercentage;
             rightPaddlePosLastFrame = rightSliderPercentage;
         }
-        else
+        else if (inputMethod == InputMethod.AIvsMouse)
         {
+            rightValue = (Input.mousePosition.y / (float)Screen.height) * 2 - 1;
+
             GameObject closestBall = null;
 
             foreach (GameObject ball in pongLogic.getBalls())
@@ -118,7 +120,43 @@ public class CustomInputScript : MonoBehaviour
                 return;
 
             leftValue = (float)closestBall.transform.position.y / pongLogic.getMaxBatPos();
-            rightValue = (Input.mousePosition.y / (float)Screen.height) * 2 - 1;
+
+
+            leftValue = Mathf.Clamp(leftValue, -1f, 1f);
+            rightValue = Mathf.Clamp(rightValue, -1, 1f);
+
+            leftPaddleSpeed = leftValue - leftPaddlePosLastFrame;
+            rightPaddleSpeed = rightValue - rightPaddlePosLastFrame;
+
+            leftPaddlePosLastFrame = leftValue;
+            rightPaddlePosLastFrame = rightValue;
+        }
+        else
+        {
+            GameObject closestBallLeft = null;
+            GameObject closestBallRight = null;
+
+            foreach (GameObject ball in pongLogic.getBalls())
+            {
+                if (closestBallLeft == null || closestBallLeft.transform.position.x > ball.transform.position.x)
+                    closestBallLeft = ball;
+            }
+
+            if (closestBallLeft == null)
+                return;
+
+            leftValue = (float)closestBallLeft.transform.position.y / pongLogic.getMaxBatPos() + Random.Range(-0.1f, 0.1f);
+
+            foreach (GameObject ball in pongLogic.getBalls())
+            {
+                if (closestBallRight == null || closestBallRight.transform.position.x < ball.transform.position.x)
+                    closestBallRight = ball;
+            }
+
+            if (closestBallRight == null)
+                return;
+
+            rightValue = (float)closestBallRight.transform.position.y / pongLogic.getMaxBatPos() + Random.Range(-0.1f, 0.1f);
 
 
             leftValue = Mathf.Clamp(leftValue, -1f, 1f);
