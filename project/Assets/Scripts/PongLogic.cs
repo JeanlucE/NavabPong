@@ -11,15 +11,16 @@ public class PongLogic : MonoBehaviour
     public GameObject[] balls;
     private List<GameObject> ballsIntern = new List<GameObject>(5);
     public GameObject upper, lower, left, right; // Walls
-    public TextMesh winText;
+    public TextMesh winText, navabText;
     public ParticleSystem ballHitP1, ballHitP2;
 
     private Game game = Game.getInstance();
-    public bool EnableAddBallBehaviour = true;
-    public bool EnableMouse = true;
+    //public bool EnableAddBallBehaviour = true;
+    //public bool EnableMouse = true;
+	public bool isMenu = false;
 
     //Ball variablen
-    private float maxBatPos = 3.2f;
+    public float maxBatPos = 3.2f;
     private float maxAddedYForce = 220f;
     private float velocityBoost = 1.07f;
     private float startSpeed = 400f;
@@ -58,7 +59,9 @@ public class PongLogic : MonoBehaviour
             }
         }
 
-        Screen.showCursor = EnableMouse;
+        Screen.showCursor = isMenu;
+
+		maxAmountOfBalls = Game.getInstance ().maxAmountOfBalls;
     }
 
     // Update is called once per frame
@@ -149,19 +152,14 @@ public class PongLogic : MonoBehaviour
 
         if (ballsIntern.Count == 0)
         {
-            if (game.player1GameScore > game.player2GameScore)
-                winText.text = "Player 1 wins";
-            else if (game.player2GameScore > game.player1GameScore)
-                winText.text = "Player 2 wins";
-            else
-                winText.text = "Navab wins";
-
             StartCoroutine("GameOver");
         }
-        else if (EnableAddBallBehaviour &&  ballsIntern.Count == 1 && !idleBalloonRunning)
+        else if (!isMenu &&  ballsIntern.Count == 1 && !idleBalloonRunning)
         {
             StartCoroutine("IdleBalloon");
         }
+
+		//Debug.Log (ballsIntern.Count + ", " + maxAmountOfBalls);
 
     }
 
@@ -232,43 +230,71 @@ public class PongLogic : MonoBehaviour
     {
         if (!gameOver)
         {
-            gameOver = true;
+			gameOver = true;
+			if(!isMenu){
 
-            for (int i = 0; i < 3; i++)
-            {
+				winText.text = game.player1TotalScore + ":" + game.player2TotalScore;
+				navabText.text = "Navab: " + game.navabTotalScore;
 
-                customInput.setLight(0, 1);
+				yield return new WaitForSeconds(0.5f);
 
-                yield return new WaitForSeconds(0.1f);
+				if (game.player1GameScore > game.player2GameScore)
+					game.player1TotalScore++;
+				else if (game.player2GameScore > game.player1GameScore)
+					game.player2TotalScore++;
+				else
+					game.navabTotalScore++;
 
-                customInput.setLight(0, 0);
+				winText.text = game.player1TotalScore + ":" + game.player2TotalScore;
+				navabText.text = "Navab: " + game.navabTotalScore;
 
-                customInput.setLight(1, 1);
+				StartCoroutine("Lights");
 
-                yield return new WaitForSeconds(0.1f);
+	            yield return new WaitForSeconds(1f);
+	            game.player1GameScore = 0;
+	            game.player2GameScore = 0;
 
-                customInput.setLight(1, 0);
-
-                customInput.setLight(2, 1);
-
-                yield return new WaitForSeconds(0.1f);
-
-                customInput.setLight(2, 0);
-
-                customInput.setLight(3, 1);
-
-                yield return new WaitForSeconds(0.1f);
-
-                customInput.setLight(3, 0);
-            }
-
-            yield return new WaitForSeconds(1);
-            game.player1GameScore = 0;
-            game.player2GameScore = 0;
-
-            Application.LoadLevel("pong");
+	            Application.LoadLevel("pong");
+			} else {
+				Application.LoadLevel("startmenu");
+			}
         }
     }
+
+	private IEnumerator Lights(){
+		while(true)
+		{
+			
+			customInput.setLight(0, 1);
+			
+			yield return new WaitForSeconds(0.1f);
+			
+			customInput.setLight(0, 0);
+			
+			customInput.setLight(1, 1);
+			
+			yield return new WaitForSeconds(0.1f);
+			
+			customInput.setLight(1, 0);
+			
+			customInput.setLight(2, 1);
+			
+			yield return new WaitForSeconds(0.1f);
+			
+			customInput.setLight(2, 0);
+			
+			customInput.setLight(3, 1);
+			
+			yield return new WaitForSeconds(0.1f);
+			
+			customInput.setLight(3, 0);
+		}
+
+		customInput.setLight(0, 0);
+		customInput.setLight(1, 0);
+		customInput.setLight(2, 0);
+		customInput.setLight(3, 0);
+	}
 
     private IEnumerator Rumble()
     {
@@ -307,7 +333,7 @@ public class PongLogic : MonoBehaviour
         return null;
     }
 
-    void OnApplicationQuit()
+    void OnDisable()
     {
         customInput.setMotor(0);
 

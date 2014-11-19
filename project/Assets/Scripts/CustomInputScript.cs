@@ -25,6 +25,8 @@ public class CustomInputScript : MonoBehaviour
     private const string RIGHT_PLAYER_AXIS = "Vertical2";
     private float leftValue = 0f, rightValue = 0f;
 
+	public float AIRandomness = 0.1f;
+
     // PongLogic COntact for AI
     private PongLogic pongLogic;
 
@@ -79,11 +81,6 @@ public class CustomInputScript : MonoBehaviour
             leftValue = Mathf.Clamp(leftValue, -1f, 1f);
             rightValue = Mathf.Clamp(rightValue, -1, 1f);
 
-            leftPaddleSpeed = leftValue - leftPaddlePosLastFrame;
-            rightPaddleSpeed = rightValue - rightPaddlePosLastFrame;
-
-            leftPaddlePosLastFrame = leftValue;
-            rightPaddlePosLastFrame = rightValue;
         }
         else if (inputMethod == InputMethod.BeagleBoard)
         {
@@ -97,18 +94,12 @@ public class CustomInputScript : MonoBehaviour
 
 
             //Calculate Paddle speed
-            float leftSliderPercentage = getLeftSlider();
-            float rightSliderPercentage = getRightSlider();
-
-            leftPaddleSpeed = leftSliderPercentage - leftPaddlePosLastFrame;
-            rightPaddleSpeed = rightSliderPercentage - rightPaddlePosLastFrame;
-
-            leftPaddlePosLastFrame = leftSliderPercentage;
-            rightPaddlePosLastFrame = rightSliderPercentage;
+            leftValue = getLeftSlider();
+            rightValue = getRightSlider();
         }
         else if (inputMethod == InputMethod.AIvsMouse)
         {
-            rightValue = (Input.mousePosition.y / (float)Screen.height) * 2 - 1;
+            rightValue = (Input.mousePosition.y/(float)Screen.height * 2f - 1);
 
             GameObject closestBall = null;
 
@@ -127,11 +118,7 @@ public class CustomInputScript : MonoBehaviour
             leftValue = Mathf.Clamp(leftValue, -1f, 1f);
             rightValue = Mathf.Clamp(rightValue, -1, 1f);
 
-            leftPaddleSpeed = leftValue - leftPaddlePosLastFrame;
-            rightPaddleSpeed = rightValue - rightPaddlePosLastFrame;
-
-            leftPaddlePosLastFrame = leftValue;
-            rightPaddlePosLastFrame = rightValue;
+            
         }
         else
         {
@@ -147,7 +134,7 @@ public class CustomInputScript : MonoBehaviour
             if (closestBallLeft == null)
                 return;
 
-            leftValue = (float)closestBallLeft.transform.position.y / pongLogic.getMaxBatPos() + Random.Range(-0.01f, 0.01f);
+			leftValue = (float)closestBallLeft.transform.position.y / pongLogic.getMaxBatPos() + Random.Range(-AIRandomness, AIRandomness);
 
             foreach (GameObject ball in pongLogic.getBalls())
             {
@@ -158,18 +145,19 @@ public class CustomInputScript : MonoBehaviour
             if (closestBallRight == null)
                 return;
 
-            rightValue = (float)closestBallRight.transform.position.y / pongLogic.getMaxBatPos() + Random.Range(-0.01f, 0.01f);
+			rightValue = (float)closestBallRight.transform.position.y / pongLogic.getMaxBatPos() + Random.Range(-AIRandomness, AIRandomness);
 
 
             leftValue = Mathf.Clamp(leftValue, -1f, 1f);
             rightValue = Mathf.Clamp(rightValue, -1, 1f);
 
-            leftPaddleSpeed = leftValue - leftPaddlePosLastFrame;
-            rightPaddleSpeed = rightValue - rightPaddlePosLastFrame;
-
-            leftPaddlePosLastFrame = leftValue;
-            rightPaddlePosLastFrame = rightValue;
         }
+
+		leftPaddleSpeed = leftValue - leftPaddlePosLastFrame;
+		rightPaddleSpeed = rightValue - rightPaddlePosLastFrame;
+		
+		leftPaddlePosLastFrame = leftValue;
+		rightPaddlePosLastFrame = rightValue;
     }
 
     public float getLeftSlider()
@@ -217,4 +205,9 @@ public class CustomInputScript : MonoBehaviour
     {
         return rightPaddleSpeed;
     }
+
+	void OnDisable(){
+		if(stream != null)
+			stream.Close ();
+	}
 }

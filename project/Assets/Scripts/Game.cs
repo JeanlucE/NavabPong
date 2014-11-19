@@ -22,7 +22,11 @@ public class Game {
 
     public int player2GameScore { get; set; }
 
+	public int navabTotalScore { get; set;}
+
     public CustomInputScript.InputMethod selectedInputMethod;
+
+	public int maxAmountOfBalls = 2;
 
     private Game(){
         
